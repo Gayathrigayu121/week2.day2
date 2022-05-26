@@ -1,45 +1,56 @@
-package week2.day2;
+import re
+import requests
+import csv
 
-import java.time.Duration;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.Select;
+s = requests.Session()
 
-import io.github.bonigarcia.wdm.WebDriverManager;
+url = "https://www.hoffmann-group.com/DE/de/hom/"
 
-public class CreateContact {
+Headers = {
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    "accept-encoding": "gzip, deflate, br",
+    "accept-language": "en-US,en;q=0.9", "cache-control": "max-age=0", "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36 Edg/98.0.1108.62"}
+def wr(s):
+    s=s.replace('(','')
+    s=s.replace(')', '')
+    s = s.replace('[', '')
+    s = s.replace(']', '')
+    s = s.replace("'", '')
+    s = s.replace('"', '')
+    s = s.replace('>', '')
+    return s
 
-	public static void main(String[] args) {
-		WebDriverManager.chromedriver().setup();
-		ChromeDriver driver=new ChromeDriver();
-		driver.manage().window().maximize();
-		driver.get("http://leaftaps.com/opentaps/control/login");
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-	    driver.findElement(By.xpath("//input[@id='username']")).sendKeys("demosalesmanager");
-	    driver.findElement(By.xpath("//input[@id='password']")).sendKeys("crmsfa");
-	    driver.findElement(By.xpath("//input[@class='decorativeSubmit']")).click();
-	    driver.findElement(By.xpath("//div[@id='label']/a")).click();
-	    driver.findElement(By.xpath("//a[text()='Contacts']")).click();
-	    driver.findElement(By.xpath("//a[text()='Create Contact']")).click();
-	    driver.findElement(By.xpath("//input[@id='firstNameField']")).sendKeys("gayathri");
-	    driver.findElement(By.xpath("//input[@id='lastNameField']")).sendKeys("gayi");
-	    driver.findElement(By.xpath("//input[@id='createContactForm_firstNameLocal']")).sendKeys("swd");
-	    driver.findElement(By.xpath("//input[@id='createContactForm_lastNameLocal']")).sendKeys("saef");
-	    driver.findElement(By.xpath("//input[@id='createContactForm_departmentName']")).sendKeys("safweq");
-	    driver.findElement(By.xpath("//textarea[@id='createContactForm_description']")).sendKeys("afwqetgreg");
-	    driver.findElement(By.xpath("//input[@id='createContactForm_primaryEmail']")).sendKeys("afsg@gmail.com");
-	    WebElement dropdown=driver.findElement(By.id("createContactForm_generalStateProvinceGeoId"));
-	    Select drop=new Select(dropdown);
-	    drop.selectByVisibleText("Arkansas");
-	    driver.findElement(By.xpath("//input[@name='submitButton']")).click();
-	    driver.findElement(By.xpath("//a[text()='Edit']")).click();
-	    driver.findElement(By.xpath("//textarea[@name='description']")).clear();
-	    driver.findElement(By.xpath("//textarea[@name='importantNote']")).sendKeys("dasggfghfhgsg");
-	    driver.findElement(By.xpath("//input[@name='submitButton']")).click();
-	    String title=driver.getTitle();
-	    System.out.println("title of the last page = "+title);
-	}
+if __name__ == '__main__':
+    l=[]
+    m=[]
+    firstUrl="https://www.hoffmann-group.com"
+    response = s.get(url,headers=Headers).text
+    name = re.findall("filterItemContainer\">.*?title=\"([^\"]*)", response, re.S)
+    #print(response)
 
-}
+    secondUrl=re.findall("data-async-url=.*?\".*?href=\"([^\"]*)",response,re.S)
+
+    for i in secondUrl:
+        res = requests.get(firstUrl+i).text
+        subname=re.findall("<span class=\"filterName\">.*?(.\w+.\w+.\w+).*?</span", res, re.S)
+        Secondnewurl =re.findall("<a href=\"([^.?]*)\".title[^.]*button type=\"button\" class=\"btn-empty btn-link btn-block",res,re.S)
+        subname.remove("Zurück")
+        l.append(subname)
+        #for (n) in zip(subname):
+            #l.append(wr(str(n)))
+
+
+
+        for i in Secondnewurl:
+            resnew = requests.get(firstUrl + i).text
+            count = re.findall("<strong>(\d*)</strong>", resnew, re.S)
+            namenw = re.findall("title=\"([^\d]*)\"[^.]*button type=\"button\" class=\"btn", resnew, re.S)
+            l.append(count)
+            #for (n) in zip(count):
+                #l.append(wr(str(n)))
+
+
+    print(l)
+

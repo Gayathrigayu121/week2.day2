@@ -48,6 +48,6 @@ if __name__ == '__main__':
             print(subname[i], count[0])
             result.append( (subname[i], count[0]) )
             
-    for product, count in result:
-        print(product, count)
-        # write your file writing code
+    with open('countnew.csv', 'a') as f:
+        for product, count in result:
+            f.write(wr(str(product)) + "," + wr(str(count)) + "\n")

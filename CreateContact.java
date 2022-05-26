@@ -31,26 +31,23 @@ if __name__ == '__main__':
     #print(response)
 
     secondUrl=re.findall("data-async-url=.*?\".*?href=\"([^\"]*)",response,re.S)
-
+    
+    result = []
     for i in secondUrl:
         res = requests.get(firstUrl+i).text
         subname=re.findall("<span class=\"filterName\">.*?(.\w+.\w+.\w+).*?</span", res, re.S)
         Secondnewurl =re.findall("<a href=\"([^.?]*)\".title[^.]*button type=\"button\" class=\"btn-empty btn-link btn-block",res,re.S)
         subname.remove("Zurück")
         l.append(subname)
-        #for (n) in zip(subname):
-            #l.append(wr(str(n)))
 
-
-
-        for i in Secondnewurl:
-            resnew = requests.get(firstUrl + i).text
+        for i in range(len(Secondnewurl)):
+            resnew = requests.get(firstUrl + Secondnewurl[i]).text
             count = re.findall("<strong>(\d*)</strong>", resnew, re.S)
             namenw = re.findall("title=\"([^\d]*)\"[^.]*button type=\"button\" class=\"btn", resnew, re.S)
             l.append(count)
-            #for (n) in zip(count):
-                #l.append(wr(str(n)))
-
-
-    print(l)
-
+            print(subname[i], count[0])
+            result.append( (subname[i], count[0]) )
+            
+    for product, count in result:
+        print(product, count)
+        # write your file writing code
